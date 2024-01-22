@@ -1,30 +1,14 @@
-import logo from './logo.svg';
 import './App.css';
-import {ActionButton, 
-  Button,
-  Column,
-  Cell, 
+import {ActionButton,  
   Divider, 
   Flex, 
-  Heading, 
-  Image,
-  Item, 
+  Heading,
   Provider,
-  Row,
-  TableBody,
-  TableView,
-  TableHeader,
-  Text,
   TextField,
-  defaultTheme, ProgressCircle, darkTheme, DialogContainer, Dialog, Content, DialogTrigger, RangeSlider} from '@adobe/react-spectrum';
-import { useEffect, useState } from 'react';
-
-
-const columns = [
-  {id: 'song', name: 'Song'},
-  {id: 'artist', name: 'Artist'},
-  {id: 'duration', name: 'Duration'}
-]
+  defaultTheme, Dialog, Content, DialogTrigger, RangeSlider} from '@adobe/react-spectrum';
+import { useState } from 'react';
+import { songTable } from './songTable';
+import { playlistStats } from './playlistStats';
 
 const metrics =[
   {key:0 , id: 'danceability', minValue: 0, maxValue: 1, step: 0.01},
@@ -68,18 +52,6 @@ async function getPlaylist(url){
   const resp = await init().then((token)=>{
     if(token.ok){
       const search = token.json().then((l)=>{
-        let p = fetch(`https://api.spotify.com/v1/users/{user_id}/playlists`, {
-          method: 'POST',
-          headers:{
-            "Authorization": `${l.token_type} ${l.access_token}`
-          },
-          body: {
-            "name": "Mc check",
-            "description": "New playlist description",
-            "public": true
-        }
-        }).then((o)=> console.log(o.json()))
-        
         let test = fetch(`https://api.spotify.com/v1/${url[1]+'s'}/${url[2]}`, {
           headers:{
             "Authorization": `${l.token_type} ${l.access_token}`
@@ -130,7 +102,6 @@ function App() {
     return temp
   });
   
-  let stats = {count: 0, avgDance: 0, avgEnergy: 0, avgValence: 0}
   let tempFilt = Object.create(() => {
     let temp ={}
     metrics.forEach(m => (
@@ -143,20 +114,6 @@ function App() {
   console.log(playlist)
   console.log(!og)
   if (!og && playlist) setOG(playlist)
-
-
-  //get the sum
-  playlist?.trackList.forEach((element)=>{
-    stats.count++
-    stats.avgDance +=  element.features.danceability
-    stats.avgEnergy += element.features.energy
-    stats.avgValence += element.features.valence
-  })
-
-  //get the avg
-    stats.avgDance = (stats.avgDance /stats.count).toFixed(2)
-    stats.avgEnergy = (stats.avgEnergy /stats.count).toFixed(2)
-    stats.avgValence = (stats.avgValence /stats.count).toFixed(2)
 
 
   return (
@@ -215,56 +172,17 @@ function App() {
                 </Dialog>}
             </DialogTrigger>
           <Divider orientation='horizontal'height={'size-10'} width={'90%'} alignSelf={'center'}/>
-          <Flex direction={"row"} width={'100%'} gap={'10%'}>
+          <Flex direction={"row"} width={'100%'} gap={'5%'} >
             
-            
-            <Flex direction={"column"} width={'40%'} alignItems={"center"}>
-              <Heading level={3}><u>{playlist? playlist.name : "Playlist"}</u></Heading>
-              <Flex direction={"row"} columnGap={'5%'} width={'100%'}>
-                <Flex direction={"column"} alignItems={"center"}>
-                  <Image src={playlist?.imgSrc} width={'50%'}/>
-                  <Heading level={6}>{playlist ? `Owner: ${playlist.maker}` : null}</Heading>
-                </Flex>
-                <Flex alignItems={'center'} direction={'column'}>
-                  <Heading level={6}>{playlist ? `Danceability: ${stats.avgDance}` : null}</Heading>
-                  <Heading level={6}>{playlist ? `Energy: ${stats.avgEnergy}` : null}</Heading>
-                  <Heading level={6}>{playlist ? `Valence: ${stats.avgValence}` : null}</Heading>
-                </Flex>
-              </Flex>
+            <Flex direction={"column"} width={'40%'} alignItems={"end"}>
+              {playlist ? playlistStats(playlist) : null}
             </Flex>
 
             <Divider orientation='vertical' width={'size-10'}/>
             
-            <Flex direction={'column'} width={'60%'} maxHeight={'size-5000'} alignItems={'center'} gap={30}>
-              <TableView width={'90%'}  alignSelf={'center'} flex ={true} isQuiet>
-                <TableHeader columns={columns}>
-                    {(column) =>(
-                      <Column align='center'key={column.id}>
-                        {column.name}
-                      </Column>
-                    )}
-                </TableHeader>
-                <TableBody items={playlist?.trackList ? playlist?.trackList : []}>
-                  {item =>(
-                    <Row>
-                      {columnKey => {
-                        switch(columnKey){
-                          case 'song':
-                            return (<Cell>{item.song.name}</Cell>)
-                          case 'artist':
-                            return <Cell>{item.song.artists[0].name}</Cell>
-                          case 'duration':
-                            return (<Cell>{`${Math.floor(item.song.duration_ms/(60*1000))} min, ${Math.round(item.song.duration_ms/(1000)%60)} sec`}</Cell>)
-                          default:
-                            return <Cell>{item.key}</Cell>
-                        }
-                      }}
-                    </Row>
-                  )}
-                </TableBody>
-              </TableView>
-              <ActionButton>Makr</ActionButton>
-              </Flex>
+            <Flex direction={'column'} maxHeight={'75vh'} width={'60%'} alignItems={'center'} gap={'5%'}>
+              {playlist ? songTable(playlist) : null}
+            </Flex>
           </Flex>
           </Flex>
         </header>
