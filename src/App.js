@@ -92,6 +92,7 @@ function loadSongs(songList, featureList){
 
 
 function App() {
+  const [selected, setSelected] = useState()
   const [playlist, setPlaylist] = useState();
   const [url, setURL] = useState()
   const [og, setOG] = useState();
@@ -175,7 +176,7 @@ function App() {
           <Flex direction={"row"} width={'100%'} gap={'5%'} >
             
             <Flex direction={"column"} width={'40%'} alignItems={"end"}>
-              {playlist ? playlistStats(playlist) : null}
+              {playlist ? playlistStats(playlist, selected, setSelected) : null}
             </Flex>
 
             <Divider orientation='vertical' width={'size-10'}/>

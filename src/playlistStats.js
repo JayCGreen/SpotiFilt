@@ -1,13 +1,15 @@
 import './App.css';
 import {
     ActionButton,
+    Dialog,
     Flex,
     Heading,
     Image,
 } from '@adobe/react-spectrum';
+import { graphPop } from './graphPopUp';
 
 
-export function playlistStats(playlist) {
+export function playlistStats(playlist, selected, setSelected) { 
     let stats = {count: 0, avgDance: 0, avgEnergy: 0, avgValence: 0}
 
     //get the sum
@@ -38,7 +40,7 @@ export function playlistStats(playlist) {
                   <Heading level={6}>{playlist ? `Valence: ${stats.avgValence}` : null}</Heading>
                 </Flex>
               </Flex>
-              <ActionButton>Analysis</ActionButton>
+              {graphPop(playlist, selected, setSelected)}   
     </div>
   );
 }
