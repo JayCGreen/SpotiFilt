@@ -5,29 +5,11 @@ import {
     Dialog,
     DialogTrigger,
     Flex,
-    Heading,
-    Image,
     Item,
     Menu,
     MenuTrigger,
 } from '@adobe/react-spectrum';
-import { useState } from 'react';
 import {VegaLite} from 'react-vega';
-
-
-const barData = {
-  table: [
-    { a: 'A', b: 28 },
-    { a: 'B', b: 55 },
-    { a: 'C', b: 43 },
-    { a: 'D', b: 91 },
-    { a: 'E', b: 81 },
-    { a: 'F', b: 53 },
-    { a: 'G', b: 19 },
-    { a: 'H', b: 87 },
-    { a: 'I', b: 52 },
-  ],
-}
 
 
 export function graphPop(playlist, selected, setSelected) {
@@ -62,7 +44,7 @@ export function graphPop(playlist, selected, setSelected) {
         <Content alignSelf={'center'}>
             <Flex alignItems={'center'} direction={'column'}>
                 <MenuTrigger>
-                    <ActionButton>Metric</ActionButton>
+                    <ActionButton marginBottom={'5%'}>Metric</ActionButton>
                     <Menu selectionMode='single' selectedKeys={selected} onSelectionChange={setSelected}>
                         {metric.map((element)=>(
                         <Item key={element}>{element}</Item>

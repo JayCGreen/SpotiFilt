@@ -6,7 +6,16 @@ import {
   TableBody,
   TableView,
   TableHeader,
+  Dialog,
+  DialogContainer,
+  Content,
+  Flex,
+  Header,
+  Text,
+  Heading,
+  Divider
 } from '@adobe/react-spectrum';
+import { useState } from 'react';
 
 const columns = [
   {id: 'song', name: 'Song'},
@@ -14,11 +23,44 @@ const columns = [
   {id: 'duration', name: 'Duration'}
 ]
 
-export function songTable(playlist) {
+const metrics =[
+  {key:0 , id: 'danceability', minValue: 0, maxValue: 1, step: 0.01},
+  {key:1, id: 'energy', minValue: 0, maxValue: 1, step: 0.01},
+  {key:2, id: 'valence', minValue: 0, maxValue: 1, step: 0.01},
+  {key:3, id: 'instrumentalness', minValue: 0, maxValue: 1, step: 0.01}
+]
+
+
+export function SongTable(playlist) {
+  const [dialog, setDialog] = useState()
+
+  function songStats(){
+    let currSong = playlist.trackList[dialog.currentKey]
+    console.log()
+    return(
+      <DialogContainer isDismissable onDismiss={()=>setDialog()} isKeyboardDismissDisabled={false}>
+        <Dialog size='m'>
+          <Header alignSelf={'start'}>
+            <Heading>{currSong.song.name}</Heading>
+          </Header>
+          <Divider/>
+          <Content>
+            {metrics.map((element)=>
+              <Heading level={4}>
+                <Text>{`${element.id}: ${currSong.features[element.id]}`}</Text><br/>
+              </Heading>
+            )}
+            
+          </Content>
+        </Dialog>
+      </DialogContainer>
+    )
+  }
   
 
   return (
-    <TableView alignSelf={'start'} width={'90%'} isQuiet>
+    <Flex width={"90%"} alignItems={'start'}>
+    <TableView alignSelf={'start'} width={'100%'} maxHeight={'75vh'} isQuiet selectionMode='single' selectionStyle="highlight" selectedKeys={dialog} onSelectionChange={setDialog}>
         <TableHeader columns={columns}>
             {(column) =>(
                 <Column align='center'key={column.id}>
@@ -45,5 +87,7 @@ export function songTable(playlist) {
             )}
         </TableBody>
     </TableView>
+    {dialog? songStats():null}
+    </Flex>
   );
 }

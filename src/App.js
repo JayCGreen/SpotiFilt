@@ -1,21 +1,16 @@
 import './App.css';
-import {ActionButton,  
+import {
   Divider, 
   Flex, 
-  Heading,
   Provider,
   TextField,
-  defaultTheme, Dialog, Content, DialogTrigger, RangeSlider} from '@adobe/react-spectrum';
+  defaultTheme} from '@adobe/react-spectrum';
 import { useState } from 'react';
-import { songTable } from './songTable';
+import { SongTable } from './songTable';
 import { playlistStats } from './playlistStats';
+import { graphPop } from './graphPopUp';
+import { Filterer } from './Filterer';
 
-const metrics =[
-  {key:0 , id: 'danceability', minValue: 0, maxValue: 1, step: 0.01},
-  {key:1, id: 'energy', minValue: 0, maxValue: 1, step: 0.01},
-  {key:2, id: 'valence', minValue: 0, maxValue: 1, step: 0.01},
-  {key:3, id: 'instumentalness', minValue: 0, maxValue: 1, step: 0.01}
-]
 
 async function init() {
   const id = "44ecebfe60684e3190de17084d2c95c3"
@@ -34,14 +29,13 @@ async function init() {
 async function getAudFeatures(id) {
   const resp = await init().then((token)=>{
     if(token.ok){
-      const search = token.json().then((l)=>{
-        let test = fetch(`https://api.spotify.com/v1/audio-features?ids=${id}`, {
+      const search = token.json().then((l)=>
+        fetch(`https://api.spotify.com/v1/audio-features?ids=${id}`, {
           headers:{
             "Authorization": `${l.token_type} ${l.access_token}`
           }
         })
-        return test
-      })
+      )
       return search
     }
   })
@@ -51,34 +45,17 @@ async function getAudFeatures(id) {
 async function getPlaylist(url){
   const resp = await init().then((token)=>{
     if(token.ok){
-      const search = token.json().then((l)=>{
-        let test = fetch(`https://api.spotify.com/v1/${url[1]+'s'}/${url[2]}`, {
+      const search = token.json().then((l)=>
+        fetch(`https://api.spotify.com/v1/${url[1]+'s'}/${url[2]}`, {
           headers:{
             "Authorization": `${l.token_type} ${l.access_token}`
           }
         })
-        return test
-      })
+      )
       return search
     }
   })
   return resp.json()
-}
-
-function filter(songList, filters){
-  let finalList = []
-  let willAdd;
-  console.log(Object.keys(filters))
-  for(let i =0; i < songList.length; i++){
-    willAdd=true;
-    Object.keys(filters).forEach((cat) => {
-      if(filters[cat].start > songList[i].features[cat] || filters[cat].end < songList[i].features[cat]){
-        willAdd = false;
-      }
-    })
-    if (willAdd) finalList.push({key: i, song: songList[i].song, features: songList[i].features})
-  }
-  return finalList
 }
 
 function loadSongs(songList, featureList){
@@ -89,33 +66,12 @@ function loadSongs(songList, featureList){
   return finalList
 }
 
-
-
 function App() {
   const [selected, setSelected] = useState()
   const [playlist, setPlaylist] = useState();
   const [url, setURL] = useState()
-  const [og, setOG] = useState();
-  const [filtered, setFiltered] = useState(() => {
-    let temp ={}
-    metrics.forEach(m => (
-    temp[m.id] = {start: m.minValue, end: m.maxValue}))
-    return temp
-  });
   
-  let tempFilt = Object.create(() => {
-    let temp ={}
-    metrics.forEach(m => (
-    temp[m.id] = {start: m.minValue, end: m.maxValue}))
-    return temp
-  })
-  
-  let trackList = new Array()
-  //let url = ''
-  console.log(playlist)
-  console.log(!og)
-  if (!og && playlist) setOG(playlist)
-
+  let trackList = []
 
   return (
     <Provider theme={defaultTheme}>
@@ -130,59 +86,28 @@ function App() {
                 songs.tracks.items.forEach((element) =>{
                   idList = idList.concat(`${element.track.id},`)
                 })
-                console.log(idList)
                 getAudFeatures(idList.slice(0,-1)).then((feat) => {
                   trackList = loadSongs(songs.tracks.items, feat.audio_features)
                   setPlaylist({name: songs.name, maker: songs.owner.display_name, trackList: trackList, imgSrc: songs.images[0].url});
-                  setOG(playlist)
                 })
               })
             }
           }}/>
-            <DialogTrigger type='modal' isDismissable>
-              <ActionButton>Filter</ActionButton>
-              {(close) => <Dialog size='M'>
-                  <Heading>Filter Playlist</Heading>
-                  <Divider />
-                  <Content>
-                    <Flex direction={'column'} gap={'size-100'}>
-                      {metrics.map((m, k) => (
-                        <RangeSlider label={m.id} onChange={(val) =>
-                          setFiltered({...filtered, [m.id]: val})
-                        } minValue={m.minValue} maxValue={m.maxValue} step={m.step} value={filtered[m.id]}/>
-                      ))}
-                    </Flex>
-                    <Flex direction={'row'} gap={'20%'} width={'100%'}>
-                      <ActionButton onPress={() =>{
-                        trackList = filter(og.trackList, filtered)
-                        setPlaylist({...playlist, trackList: trackList});
-                        close()
-                      }}>Set Filters</ActionButton>
-                      <ActionButton onPress={() =>{
-                        setFiltered(tempFilt)
-                        trackList = filter(playlist.trackList, filtered)
-                        setPlaylist(og);
-                        close()
-                      }}>Reset</ActionButton>
-                      <ActionButton onPress={() =>{
-                        close()
-                      }}>Cancel</ActionButton>
-                    </Flex>
-                  </Content>
-                  
-                </Dialog>}
-            </DialogTrigger>
+
+          {Filterer(playlist, setPlaylist)}
+
           <Divider orientation='horizontal'height={'size-10'} width={'90%'} alignSelf={'center'}/>
+
           <Flex direction={"row"} width={'100%'} gap={'5%'} >
-            
-            <Flex direction={"column"} width={'40%'} alignItems={"end"}>
-              {playlist ? playlistStats(playlist, selected, setSelected) : null}
+            <Flex direction={"column"} width={'40%'} alignItems={"center"}>
+              {playlist ? playlistStats(playlist) : null}
+              {playlist ? graphPop(playlist, selected, setSelected) : null}
             </Flex>
 
             <Divider orientation='vertical' width={'size-10'}/>
             
             <Flex direction={'column'} maxHeight={'75vh'} width={'60%'} alignItems={'center'} gap={'5%'}>
-              {playlist ? songTable(playlist) : null}
+              {SongTable(playlist)}
             </Flex>
           </Flex>
           </Flex>
