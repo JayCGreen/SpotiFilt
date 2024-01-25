@@ -1,11 +1,12 @@
 # Spotifylter
 
-This project is a web application that uses the the Spotify API to display stats on the playlists and the songs within, as well as filter the playlist by these stats. See the demo folder for a video demonstration
+This project is a web application that uses the the [Spotify API](https://developer.spotify.com/documentation/web-api) to display stats on the playlists and the songs within, as well as filter the playlist by these stats. 
+
+To use, go to [This url](https://jaycgreen.github.io/SpotiFylter/). To see a video demo instead, see the one in the demo folder.
 
 
 
-
-
+### To Modify this project, clone the repo and reference the scripts below
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
