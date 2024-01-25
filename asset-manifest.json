@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/SpotiFylter/static/css/main.1b0ab82f.css",
-    "main.js": "/SpotiFylter/static/js/main.070773f3.js",
+    "main.js": "/SpotiFylter/static/js/main.728c6cf2.js",
     "static/js/787.96267377.chunk.js": "/SpotiFylter/static/js/787.96267377.chunk.js",
     "index.html": "/SpotiFylter/index.html",
     "main.1b0ab82f.css.map": "/SpotiFylter/static/css/main.1b0ab82f.css.map",
-    "main.070773f3.js.map": "/SpotiFylter/static/js/main.070773f3.js.map",
+    "main.728c6cf2.js.map": "/SpotiFylter/static/js/main.728c6cf2.js.map",
     "787.96267377.chunk.js.map": "/SpotiFylter/static/js/787.96267377.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1b0ab82f.css",
-    "static/js/main.070773f3.js"
+    "static/js/main.728c6cf2.js"
   ]
 }
