@@ -1,5 +1,6 @@
 import './App.css';
 import {
+  ActionButton,
   Divider, 
   Flex, 
   Provider,
@@ -10,6 +11,7 @@ import { SongTable } from './songTable';
 import { playlistStats } from './playlistStats';
 import { graphPop } from './graphPopUp';
 import { Filterer } from './Filterer';
+import Search from '@spectrum-icons/workflow/Search'
 
 
 async function init() {
@@ -66,6 +68,8 @@ function loadSongs(songList, featureList){
   return finalList
 }
 
+
+
 function App() {
   const [selected, setSelected] = useState()
   const [playlist, setPlaylist] = useState();
@@ -73,26 +77,34 @@ function App() {
   
   let trackList = []
 
+  function submission(){
+    let ul = new URL(url)
+    getPlaylist(ul.pathname.split('/')).then((songs) => {
+      let idList = ''
+      songs.tracks.items.forEach((element) =>{
+        idList = idList.concat(`${element.track.id},`)
+      })
+      getAudFeatures(idList.slice(0,-1)).then((feat) => {
+        trackList = loadSongs(songs.tracks.items, feat.audio_features)
+        setPlaylist({name: songs.name, maker: songs.owner.display_name, trackList: trackList, imgSrc: songs.images[0].url});
+      })
+    })
+  }
+
   return (
     <Provider theme={defaultTheme}>
       <div className="App">
         <header className="App-header">
           <Flex direction={'column'} gap={'size-100'} width={'100%'} alignItems={'center'}>
-          <TextField label="Playlist URL" onChange={setURL} value ={url} width={'50%'} onKeyUp={e => {
-            if(e.code === "Enter"){
-              let ul = new URL(url)
-              getPlaylist(ul.pathname.split('/')).then((songs) => {
-                let idList = ''
-                songs.tracks.items.forEach((element) =>{
-                  idList = idList.concat(`${element.track.id},`)
-                })
-                getAudFeatures(idList.slice(0,-1)).then((feat) => {
-                  trackList = loadSongs(songs.tracks.items, feat.audio_features)
-                  setPlaylist({name: songs.name, maker: songs.owner.display_name, trackList: trackList, imgSrc: songs.images[0].url});
-                })
-              })
-            }
-          }}/>
+            <Flex direction={"row"} width={'75vw'} alignSelf={'end'} gap={'2.5%'}>
+              <TextField onChange={setURL} value ={url} width={'50%'} onKeyUp={e => {
+              if(e.code === "Enter"){
+                submission()
+              }
+            }}/>
+              <ActionButton  onPress={submission} isDisabled={!url}><Search/></ActionButton>
+            </Flex>
+          
 
           {Filterer(playlist, setPlaylist)}
 
