@@ -59,7 +59,7 @@ export function SongTable(playlist) {
   
 
   return (
-    <Flex width={"90%"} alignItems={'start'}>
+    <Flex width={"100%"} alignItems={'start'}>
     <TableView alignSelf={'start'} width={'100%'} maxHeight={'75vh'} isQuiet selectionMode='single' selectionStyle="highlight" selectedKeys={dialog} onSelectionChange={setDialog}>
         <TableHeader columns={columns}>
             {(column) =>(

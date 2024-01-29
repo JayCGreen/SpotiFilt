@@ -59,7 +59,7 @@ export function Filterer(playlist, setPlaylist) {
 
   return (
     <DialogTrigger type='modal' isDismissable>
-    <ActionButton isDisabled={!playlist}>Filter</ActionButton>
+    <ActionButton isDisabled={!playlist} width={'100%'} alignSelf={'center'}>Filter</ActionButton>
     {(close) => <Dialog size='M'>
         <Heading>Filter Playlist</Heading>
         <Divider />

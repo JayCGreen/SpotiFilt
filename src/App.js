@@ -2,6 +2,7 @@ import './App.css';
 import {
   ActionButton,
   Divider, 
+  Form,
   Flex, 
   Provider,
   TextField,
@@ -92,38 +93,33 @@ function App() {
   }
 
   return (
-    <Provider theme={defaultTheme}>
-      <div className="App">
-        <header className="App-header">
-          <Flex direction={'column'} gap={'size-100'} width={'100%'} alignItems={'center'}>
-            <Flex direction={"row"} width={'75vw'} alignSelf={'end'} gap={'2.5%'}>
-              <TextField onChange={setURL} value ={url} width={'50%'} onKeyUp={e => {
-              if(e.code === "Enter"){
+    <Provider theme={defaultTheme} width={'100vw'} height={'100vh'}>
+      <div className="wrapper">
+            <div className='search'>
+              <Form width={'100%'} onSubmit={(e) => {
+                e.preventDefault()
                 submission()
-              }
-            }}/>
-              <ActionButton  onPress={submission} isDisabled={!url}><Search/></ActionButton>
-            </Flex>
+                }} orientation='horizontal'>
+                <div>
+                <TextField onChange={setURL} width={'80%'} onvalue ={url}/>
+                <ActionButton  type='submit' width={'20%'} isDisabled={!url}><Search/></ActionButton>
+                </div>
+              </Form>
+            </div>
           
-
-          {Filterer(playlist, setPlaylist)}
-
-          <Divider orientation='horizontal'height={'size-10'} width={'90%'} alignSelf={'center'}/>
-
-          <Flex direction={"row"} width={'100%'} gap={'5%'} >
-            <Flex direction={"column"} width={'40%'} alignItems={"center"}>
+            <div className='filt'>
+              {Filterer(playlist, setPlaylist)}
+            </div>
+            <div className='stats'>
               {playlist ? playlistStats(playlist) : null}
               {playlist ? graphPop(playlist, selected, setSelected) : null}
-            </Flex>
-
-            <Divider orientation='vertical' width={'size-10'}/>
-            
-            <Flex direction={'column'} maxHeight={'75vh'} width={'60%'} alignItems={'center'} gap={'5%'}>
+            </div>
+            <div className='songs'>
               {SongTable(playlist)}
-            </Flex>
-          </Flex>
-          </Flex>
-        </header>
+            </div>
+          <div className='con'>
+          <Divider orientation='horizontal'height={'size-10'} width={'90%'} alignSelf={'center'}/>            
+          </div>
       </div>
     </Provider>
   );

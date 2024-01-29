@@ -26,16 +26,16 @@ export function playlistStats(playlist) {
   return (
     <div>
         <Heading level={3}><u>{playlist? playlist.name : "Playlist"}</u></Heading>
-        <Flex direction={"row"} width={'100%'}>
-          <Flex direction={"column"} alignItems={"center"}>
-            <Image src={playlist?.imgSrc} width={'50%'}/>
+        <Flex direction={"row"} width={'100%'} gap={'1em'}>
+          <Flex direction={"column"} alignItems={"start"} width={'50%'}>
+            <Image src={playlist?.imgSrc} />
             <Heading level={6}>{playlist ? `Owner: ${playlist.maker}` : null}</Heading>
           </Flex>
-          <Flex alignItems={'start'} direction={'column'}>
-            <Heading level={6}>
+          <Flex direction={'column'} width={'50%'} alignItems={'start'}>
+            <Heading level={4}>
               {Object.keys(stats).map((map)=>(
                 <div>
-                <Text>{playlist ? `${map}: ` : null}</Text><br/>
+                <Text>{playlist ? `${map}: ` : null}</Text>
                 <Text>{playlist ? stats[map] : null}</Text><br/>
                 </div>
               )
